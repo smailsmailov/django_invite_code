@@ -1,0 +1,130 @@
+{% extends 'base.html'%}
+{% block content%}
+<div style="width: 800px;">
+
+    <div class="mb-3">
+        <form action="" method="post" class="d-flex justify-content-center align-items-center flex-column">
+            <div class="row w-100">
+                <label for="phone">Телефон:</label>
+                <div class="row">
+                    <input
+
+                    {% if request.user.is_authenticated %}
+                    disabled
+                    {%endif%}
+                            required
+                            type="text"
+                            name="phone"
+                            id="phone"
+                            placeholder="+7(000)000-00-00" />
+                </div>
+            </div>
+            <div class="row w-100">
+                <label for="code">Code:</label>
+                <p onclick="get_code(this);" class="link-primary" style="cursor: pointer;">Получить код!</p>
+                <div class="row">
+                    <input
+                            required
+                            {% if request.user.is_authenticated %}
+                            disabled
+                            {%endif%}
+                            maxlength="4"
+                            id="code"
+                            name="code"
+                            type="text"
+                            placeholder="CODE" />
+                </div>
+            </div>
+            <!-- <button id="get_code_" type="button"  class="btn btn-outline-success mt-5 w-100">Получить код!</button> -->
+            <button 
+            {% if request.user.is_authenticated %}
+            disabled
+            {%endif%}
+            id="send_code_" type="submite"   class="btn btn-outline-success mt-5 w-100">Отправить код!</button>
+        </form>
+    </div>
+
+
+
+    {% if request.user.is_authenticated %}
+    <div class="w-100 h-100 " >
+        <div class="mb-3">
+          <label for="input1" class="form-label">Код пользователя к которому хотите подключится</label>
+          <input type="text" class="form-control" id="input1" >
+        </div>
+        <button class="btn btn-outline-success mt-2 w-100">Подключится</button>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            $.ajax({
+                url: '{% url "get_all_users"%}',         
+                method: 'get',             
+                dataType: 'text',           
+                data: {},     
+                success: function(data){ 
+                     console.log(data); 
+                    },
+                    error : function(data){
+                }
+            });
+        })
+    </script>
+
+    {% endif%}
+</div>
+
+<script>
+    function get_code(btn){
+        if( mask.unmaskedValue.length != 11){
+            alert("Вы не заполнили телефон ;-(")
+        }
+        else {
+            $.ajax({
+                url: '{% url "get_code"%}',         
+                method: 'post',             
+                dataType: 'text',           
+                data: {"phone" : mask.unmaskedValue},     
+                success: function(data){ 
+                     console.log(data); 
+                    },
+                    error : function(data){
+                }
+            });
+        }
+    }
+    function send_code_(btn){
+        if( $("#code").length != 4){
+
+        }
+        else {
+            btn.disabled = true
+            $.ajax({
+                url: '{% url "get_code"%}',         
+                method: 'post',             
+                dataType: 'json',           
+                data: {},     
+                success: function(data){ 
+                     console.log(data); 
+                     $("#get_code_").remove()
+                    },
+                    error : function(data){
+                        $("#get_code_").disabled = false
+                }
+            });
+        }
+
+    }
+</script>
+
+<script>
+    var element = document.getElementById('phone');
+    var maskOptions = {
+        mask: '+{7}(000)000-00-00',
+        lazy: false
+    } 
+    var mask = new IMask(element, maskOptions);
+</script>
+
+{% endblock %}
+
