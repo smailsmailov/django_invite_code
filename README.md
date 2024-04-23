@@ -3,6 +3,8 @@
 sudo docker-compose build . 
 sudo docker-compose up
 
+далее нужно открыть контейнер Docker exec -it <container id> bash
+после накатить миграции 
 Готово....
 
 Все поднимается на 0.0.0.0:8000
